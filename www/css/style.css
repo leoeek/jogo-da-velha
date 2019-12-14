@@ -7,7 +7,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgb(13, 128, 182);
+    background: #3068D9;
 }
 
 .fixed {
@@ -33,8 +33,8 @@ body {
 }
 
 .velha .quadro {
-    width: 125px;
-    height: 125px;
+    width: 105px;
+    height: 105px;
     border-bottom: 3px solid white;
     color: #e4e4e4;
     font-size: 5em;
