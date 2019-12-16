@@ -2,7 +2,17 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <!-- script-src 'sha256-hErW1MMDpFKX/KHqLG8z14YW8/7i4xqn/Nc1N+FzxeY=';  -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://ssl.gstatic.com; default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="
+           default-src 'self' *.googleapis.com data: gap:
+               https://ssl.gstatic.com;
+           script-src 'self' 'unsafe-inline' 'unsafe-eval'
+               https://*.gstatic.com https://*.googleapis.com;
+           style-src 'self' 'unsafe-inline';
+           media-src *;
+           connect-src *
+       "> -->
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <!-- <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover"> -->
@@ -63,25 +73,26 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
+                    <li id="iniciar-partida" class="nav-item">
+                        <a class="nav-link" href="#">Iniciar Partida</a>
+                    </li>
                     <li id="salva-local" class="nav-item">
-                        <a class="nav-link" href="#">Salvar local
-                            
-                        </a>
+                        <a class="nav-link" href="#">Salvar Partida</a>
                     </li>
                     <li id="carrega-local" class="nav-item">
-                        <a class="nav-link" href="#">Carregar Local</a>
+                        <a class="nav-link" href="#">Carregar Partida</a>
                     </li>
                     <li id="limpar" class="nav-item">
-                        <a class="nav-link" href="#">Limpar Local</a>
+                        <a class="nav-link" href="#">Limpar Partida</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="games.html">Ver jogos</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <form class="form-inline mt-2 mt-md-0">
                     <input id="jogador-x" class="form-control mr-sm-2" type="text" placeholder="Jogador X">
                     <input id="jogador-o" class="form-control mr-sm-2" type="text" placeholder="Jogador 0">
-                    <button id="salvar" style="display: none;" class="btn btn-secondary my-2 my-sm-0" type="submit">Salvar</button>
+                    <button id="enviar" class="btn btn-secondary my-2 my-sm-0" type="submit">Salvar</button>
                 </form>
             </div>
 
@@ -91,7 +102,7 @@
 
     <main role="main" class="flex-shrink-0">
         <div class="container">
-            <div id="velha" class="velha">
+            <div id="tabuleiro" class="tabuleiro">
                 <div class="coluna">
                     <span data-id="0" class="area"></span>
                     <span data-id="1" class="area"></span>
@@ -117,10 +128,22 @@
         </div>
     </footer>
 
+
+    <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js"></script>
+    <script>
+        var firebaseConfig = {};
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        var idPartida = false;
+    </script>
+
     <!-- <script type="text/javascript" src="cordova.js"></script> -->
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

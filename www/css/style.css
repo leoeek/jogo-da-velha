@@ -10,29 +10,30 @@ body {
     background: #3068D9;
 }
 
-.fixed {
+
+/* .fixed {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-}
+} */
 
-.velha {
+.tabuleiro {
     display: flex;
     justify-content: center;
 }
 
-.velha .coluna {
+.tabuleiro .coluna {
     display: flex;
     flex-direction: column;
     border-right: 3px solid white;
 }
 
-.velha .coluna:last-child {
+.tabuleiro .coluna:last-child {
     border: none;
 }
 
-.velha .area {
+.tabuleiro .area {
     width: 105px;
     height: 105px;
     border-bottom: 3px solid white;
@@ -42,7 +43,7 @@ body {
     text-align: center;
 }
 
-.velha .area:last-child {
+.tabuleiro .area:last-child {
     border: none;
 }
 
@@ -59,21 +60,21 @@ span {
 }
 
 .modalClass {
-    background: wheat;
+    background: #FFF;
     width: 200px;
     padding: 20px;
     display: block;
     margin-bottom: 10px;
-    animation-name: aparecer;
+    animation-name: exibe;
     animation-duration: 0.4s;
 }
 
 .remover {
-    animation: desaparecer .4s;
+    animation: some .4s;
     animation-fill-mode: forwards;
 }
 
-@keyframes aparecer {
+@keyframes exibe {
     from {
         opacity: 0
     }
@@ -82,7 +83,7 @@ span {
     }
 }
 
-@keyframes desaparecer {
+@keyframes some {
     50% {
         transform: translateX(5%);
     }

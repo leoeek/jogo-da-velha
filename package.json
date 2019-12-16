@@ -3,7 +3,7 @@
     "displayName": "Jogo da Véia",
     "version": "1.0.0",
     "description": "Um simples jogo da velha para praticar JS",
-    "main": "index.js",
+    "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -13,6 +13,8 @@
     "author": "Leonardo Procópio",
     "license": "Apache-2.0",
     "dependencies": {
+        "cordova-android": "^8.1.0",
+        "cordova-browser": "^6.0.0",
         "cordova-ios": "^5.1.1"
     },
     "devDependencies": {
@@ -23,7 +25,9 @@
             "cordova-plugin-whitelist": {}
         },
         "platforms": [
-            "ios"
+            "ios",
+            "android",
+            "browser"
         ]
     }
 }

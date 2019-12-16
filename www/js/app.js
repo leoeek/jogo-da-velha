@@ -1,6 +1,8 @@
 window.onload = () => {
     new JogoVelha();
+
 };
+
 
 class JogoVelha {
     constructor() {
@@ -10,8 +12,8 @@ class JogoVelha {
 
     iniciaEstado() {
         this.turno = true;
-        this.jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.fim = false;
+        this.jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.vitoria = [448, 56, 7, 292, 146, 73, 273, 84];
     }
 
@@ -25,36 +27,51 @@ class JogoVelha {
         this.carregarLocal = document.querySelector("#carrega-local");
         this.carregarLocal.addEventListener("click", this.carregaLocal.bind(this));
 
-        this.salvar = document.querySelector("#salvar");
-        this.salvar.addEventListener("click", this.enviarServidor.bind(this));
+        this.enviar = document.querySelector("#enviar");
+        this.enviar.addEventListener("click", this.enviarPartida.bind(this));
 
         this.limparLocal = document.querySelector("#limpar");
         this.limparLocal.addEventListener("click", this.limpaLocal.bind(this));
 
-        this.velha = document.querySelector("#velha");
-        this.velha.addEventListener("click", event => {
+        this.iniciarPartida = document.querySelector("#iniciar-partida");
+        this.iniciarPartida.addEventListener("click", this.iniciaPartida.bind(this));
+
+        this.tabuleiro = document.querySelector("#tabuleiro");
+        this.tabuleiro.addEventListener("click", event => {
             this.realizaJogada(event);
             this.render();
         });
     }
 
-    salvaLocal() {
+    retornaKey() {
+        return db.ref('partidas').push().key;
+    }
+
+    salvaLocal(id) {
         const dados = {
             jogadorX: this.jogadorX.value,
             jogadorO: this.jogadorO.value,
             jogadas: this.jogadas
         };
 
+        let gravar = {};
+        gravar[`partidas/${id}`] = dados;
+        console.log('gravar', gravar)
         localStorage.setItem("jogo", JSON.stringify(dados));
+        db.ref().update(gravar);
     }
 
     carregaLocal() {
-        const dados = JSON.parse(localStorage.getItem("jogo"));
-        this.jogadorO.value = dados.jogadorO;
-        this.jogadorX.value = dados.jogadorX;
-        this.jogadas = dados.jogadas;
-
-        this.render();
+        // const dados = JSON.parse(localStorage.getItem("jogo"));
+        // console.log(idPartida)
+        var docRef = db.ref(`partidas/${idPartida}`);
+        docRef.on('value', item => {
+            console.log(item.val())
+            this.jogadorO.value = item.val().jogadorO;
+            this.jogadorX.value = item.val().jogadorX;
+            this.jogadas = item.val().jogadas;
+            this.render();
+        })
     }
 
     limpaLocal() {
@@ -64,6 +81,13 @@ class JogoVelha {
         this.iniciaEstado();
 
         this.render();
+    }
+
+    iniciaPartida() {
+        idPartida = this.retornaKey();
+        console.log(idPartida)
+        this.salvaLocal(idPartida);
+        this.carregaLocal()
     }
 
     realizaJogada(event) {
@@ -85,8 +109,11 @@ class JogoVelha {
         }
 
         this.jogadas[id] = this.turno ? "X" : "O";
-
         this.turno = !this.turno;
+        let gravar = {};
+        gravar[`partidas/${idPartida}/jogadas`] = this.jogadas;
+        gravar[`partidas/${idPartida}/turno`] = this.turno;
+        db.ref().update(gravar);
     }
 
     render() {
@@ -98,8 +125,7 @@ class JogoVelha {
 
             this.modal(`Oba! ${resultado} venceu!`);
         } else {
-            this.salvar.style.display = "none";
-
+            // this.salvar.style.display = "none";
         }
 
         const velhaElemento = document.querySelectorAll("[data-id]");
@@ -148,11 +174,11 @@ class JogoVelha {
         }, 2000);
     }
 
-    enviarServidor() {
+    enviarPartida() {
         const jogadorX = this.jogadorX.value;
         const jogadorO = this.jogadorO.value;
 
-        domtoimage.toPng(this.velha, { width: '400', height: '400' })
+        domtoimage.toPng(this.tabuleiro, { width: '400', height: '400' })
             .then((dataUrl) => {
 
                 return axios.post('/save', {
