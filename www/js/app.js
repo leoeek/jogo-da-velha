@@ -1,6 +1,5 @@
 window.onload = () => {
     new JogoVelha();
-
 };
 
 
@@ -11,6 +10,7 @@ class JogoVelha {
     }
 
     iniciaEstado() {
+        this.id    = Math.floor((Math.random() * 100) + 1);
         this.turno = true;
         this.fim = false;
         this.jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -18,23 +18,22 @@ class JogoVelha {
     }
 
     iniciaElementos() {
-        this.jogadorX = document.querySelector("#jogador-x");
-        this.jogadorO = document.querySelector("#jogador-o");
-
-        this.salvarLocal = document.querySelector("#salva-local");
-        this.salvarLocal.addEventListener("click", this.salvaLocal.bind(this));
+        this.jogador = document.querySelector("#jogador");
+        this.token = document.querySelector("#token");
 
         this.carregarLocal = document.querySelector("#carrega-local");
         this.carregarLocal.addEventListener("click", this.carregaLocal.bind(this));
 
-        this.enviar = document.querySelector("#enviar");
-        this.enviar.addEventListener("click", this.enviarPartida.bind(this));
+        this.participar = document.querySelector("#participar");
+        this.participar.addEventListener("click", this.participarPartida.bind(this));
 
         this.limparLocal = document.querySelector("#limpar");
         this.limparLocal.addEventListener("click", this.limpaLocal.bind(this));
 
         this.iniciarPartida = document.querySelector("#iniciar-partida");
         this.iniciarPartida.addEventListener("click", this.iniciaPartida.bind(this));
+
+        this.navbarCollapse = document.querySelector("#navbarCollapse");
 
         this.tabuleiro = document.querySelector("#tabuleiro");
         this.tabuleiro.addEventListener("click", event => {
@@ -47,46 +46,49 @@ class JogoVelha {
         return db.ref('partidas').push().key;
     }
 
-    salvaLocal(id) {
-        const dados = {
-            jogadorX: this.jogadorX.value,
-            jogadorO: this.jogadorO.value,
-            jogadas: this.jogadas
-        };
-
-        let gravar = {};
-        gravar[`partidas/${id}`] = dados;
-        console.log('gravar', gravar)
-        localStorage.setItem("jogo", JSON.stringify(dados));
-        db.ref().update(gravar);
-    }
-
     carregaLocal() {
-        // const dados = JSON.parse(localStorage.getItem("jogo"));
-        // console.log(idPartida)
-        var docRef = db.ref(`partidas/${idPartida}`);
+        const docRef = db.ref(`partidas/${idPartida}`);
         docRef.on('value', item => {
             console.log(item.val())
-            this.jogadorO.value = item.val().jogadorO;
-            this.jogadorX.value = item.val().jogadorX;
+            this.token = item.val().token;
+            // this.jogadorO.value = item.val().jogadorO;
+            this.jogador.value = item.val().jogadorX;
             this.jogadas = item.val().jogadas;
+            this.turno = item.val().turno;
+            this.fim = item.val().fim;
             this.render();
         })
     }
 
     limpaLocal() {
-        localStorage.removeItem("jogo");
-        this.jogadorO.value = "";
-        this.jogadorX.value = "";
+        this.jogador.value = "";
         this.iniciaEstado();
 
         this.render();
     }
 
+    getLance() {
+        const dados = {
+            token: this.id,
+            jogadorX: this.jogador.value,
+            jogadorO: '',
+            jogadas: this.jogadas,
+            turno: this.turno,
+            fim: this.fim,
+        };
+        return dados;
+    }
+
     iniciaPartida() {
         idPartida = this.retornaKey();
-        console.log(idPartida)
-        this.salvaLocal(idPartida);
+        const dados = this.getLance();
+
+        let gravar = {};
+        gravar[`partidas/${idPartida}`] = dados;
+        db.ref().update(gravar);
+
+        this.navbarCollapse.classList.toggle("show");
+
         this.carregaLocal()
     }
 
@@ -109,10 +111,10 @@ class JogoVelha {
         }
 
         this.jogadas[id] = this.turno ? "X" : "O";
-        this.turno = !this.turno;
-        let gravar = {};
-        gravar[`partidas/${idPartida}/jogadas`] = this.jogadas;
-        gravar[`partidas/${idPartida}/turno`] = this.turno;
+        this.turno  = !this.turno;
+        const dados = this.getLance();
+        let gravar  = {};
+        gravar[`partidas/${idPartida}`] = dados;
         db.ref().update(gravar);
     }
 
@@ -121,7 +123,7 @@ class JogoVelha {
 
         if (resultado == "X" || resultado == "O") {
             this.fim = true;
-            this.salvar.style.display = "block";
+            // this.salvar.style.display = "block";
 
             this.modal(`Oba! ${resultado} venceu!`);
         } else {
@@ -174,26 +176,21 @@ class JogoVelha {
         }, 2000);
     }
 
-    enviarPartida() {
-        const jogadorX = this.jogadorX.value;
-        const jogadorO = this.jogadorO.value;
-
-        domtoimage.toPng(this.tabuleiro, { width: '400', height: '400' })
-            .then((dataUrl) => {
-
-                return axios.post('/save', {
-                    jogadorX,
-                    jogadorO,
-                    jogadas: JSON.stringify(this.jogadas),
-                    img: dataUrl
-                })
-
-            }).then((response) => {
-                this.modal('Envio com sucesso')
-            })
-            .catch((error) => {
-                this.modal('oops, something went wrong!', error);
-            });
-
+    participarPartida() {
+        const id = parseInt(this.token.value);
+        const jogador = this.jogador.value;
+        var docRef =  db.ref("/partidas").orderByChild("token").equalTo(id);
+        docRef.on('child_added', (item) => {
+            console.log(item.val())
+            if (item.val()) {
+                this.id = item.val().token;
+                // this.jogadorO.value = item.val().jogadorO;
+                this.jogador.value = item.val().jogadorX;
+                this.jogadas = item.val().jogadas;
+                this.turno = item.val().turno;
+                this.fim = item.val().fim;
+                this.render();
+            }
+        })       
     }
 }

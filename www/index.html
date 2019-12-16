@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <!-- script-src 'sha256-hErW1MMDpFKX/KHqLG8z14YW8/7i4xqn/Nc1N+FzxeY=';  -->
     <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://ssl.gstatic.com; default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="
            default-src 'self' *.googleapis.com data: gap:
@@ -15,14 +14,12 @@
        "> -->
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <!-- <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/dom2image.js"></script>
     <title>Jogo da Véia</title>
     <style>
         .bd-placeholder-img {
@@ -61,6 +58,10 @@
         .navbar-dark {
             background-color: #2955D9
         }
+
+        .inivisel {
+            display: none
+        }
     </style>
 </head>
 
@@ -72,28 +73,24 @@
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
+                
+                <form class="form-inline mt-2 mt-md-0">
+                    <input id="token" class="form-control mr-sm-2" type="text" placeholder="Token">
+                    <input id="jogador" class="form-control mr-sm-2" type="text" placeholder="Jogador">
+                    <button id="participar" class="btn btn-secondary my-2 my-sm-0" type="submit">Participar</button>
+                </form>
+
                 <ul class="navbar-nav mr-auto">
                     <li id="iniciar-partida" class="nav-item">
                         <a class="nav-link" href="#">Iniciar Partida</a>
                     </li>
-                    <li id="salva-local" class="nav-item">
-                        <a class="nav-link" href="#">Salvar Partida</a>
-                    </li>
-                    <li id="carrega-local" class="nav-item">
+                    <li id="carrega-local" class="nav-item inivisel">
                         <a class="nav-link" href="#">Carregar Partida</a>
                     </li>
-                    <li id="limpar" class="nav-item">
+                    <li id="limpar" class="nav-item inivisel">
                         <a class="nav-link" href="#">Limpar Partida</a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="games.html">Ver jogos</a>
-                    </li> -->
                 </ul>
-                <form class="form-inline mt-2 mt-md-0">
-                    <input id="jogador-x" class="form-control mr-sm-2" type="text" placeholder="Jogador X">
-                    <input id="jogador-o" class="form-control mr-sm-2" type="text" placeholder="Jogador 0">
-                    <button id="enviar" class="btn btn-secondary my-2 my-sm-0" type="submit">Salvar</button>
-                </form>
             </div>
 
             <div id="alerta"></div>
@@ -132,7 +129,15 @@
     <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js"></script>
     <script>
-        var firebaseConfig = {};
+        const firebaseConfig = {
+            apiKey: "",
+            authDomain: "",
+            databaseURL: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
