@@ -10,7 +10,7 @@ class JogoVelha {
     }
 
     iniciaEstado() {
-        this.id    = Math.floor((Math.random() * 100) + 1);
+        this.id = Math.floor((Math.random() * 100) + 1);
         this.turno = true;
         this.fim = false;
         this.jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -80,10 +80,12 @@ class JogoVelha {
     }
 
     iniciaPartida() {
+        this.limpaLocal();
         idPartida = this.retornaKey();
         const dados = this.getLance();
 
         let gravar = {};
+        alert(`Partida ${this.id} iniciada!`);
         gravar[`partidas/${idPartida}`] = dados;
         db.ref().update(gravar);
 
@@ -111,9 +113,9 @@ class JogoVelha {
         }
 
         this.jogadas[id] = this.turno ? "X" : "O";
-        this.turno  = !this.turno;
+        this.turno = !this.turno;
         const dados = this.getLance();
-        let gravar  = {};
+        let gravar = {};
         gravar[`partidas/${idPartida}`] = dados;
         db.ref().update(gravar);
     }
@@ -179,18 +181,21 @@ class JogoVelha {
     participarPartida() {
         const id = parseInt(this.token.value);
         const jogador = this.jogador.value;
-        var docRef =  db.ref("/partidas").orderByChild("token").equalTo(id);
-        docRef.on('child_added', (item) => {
+        var docRef = db.ref("/partidas").orderByChild("token").equalTo(id);
+        docRef.on('value', (item) => {
             console.log(item.val())
-            if (item.val()) {
-                this.id = item.val().token;
+            const dados = item.val()
+            item.forEach(d => {
+                idPartida = d.key
+                this.id = dados[idPartida].token;
                 // this.jogadorO.value = item.val().jogadorO;
-                this.jogador.value = item.val().jogadorX;
-                this.jogadas = item.val().jogadas;
-                this.turno = item.val().turno;
-                this.fim = item.val().fim;
+                this.jogador.value = dados[idPartida].jogadorX;
+                this.jogadas = dados[idPartida].jogadas;
+                this.turno = dados[idPartida].turno;
+                this.fim = dados[idPartida].fim;
                 this.render();
-            }
-        })       
+            })
+
+        })
     }
 }
